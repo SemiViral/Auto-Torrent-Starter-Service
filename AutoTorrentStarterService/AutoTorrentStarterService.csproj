@@ -32,9 +32,14 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>AutoTorrentStarterService.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Management" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -45,6 +50,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Model\AutoFileSystemWatcher.cs" />
+    <Compile Include="ProjectInstaller.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="ProjectInstaller.Designer.cs">
+      <DependentUpon>ProjectInstaller.cs</DependentUpon>
+    </Compile>
     <Compile Include="ViewModel\AutoTorrentStarterServiceViewModel.cs" />
     <Compile Include="View\AutoTorrentStarterService.cs">
       <SubType>Component</SubType>
@@ -59,6 +70,9 @@
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Include="ProjectInstaller.resx">
+      <DependentUpon>ProjectInstaller.cs</DependentUpon>
+    </EmbeddedResource>
     <EmbeddedResource Include="View\AutoTorrentStarterService.resx">
       <DependentUpon>AutoTorrentStarterService.cs</DependentUpon>
     </EmbeddedResource>
