@@ -44,7 +44,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Model\AutoTorrentStarter.cs" />
     <Compile Include="Model\AutoFileSystemWatcher.cs" />
     <Compile Include="ViewModel\AutoTorrentStarterServiceViewModel.cs" />
     <Compile Include="View\AutoTorrentStarterService.cs">
