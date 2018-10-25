@@ -1,4 +1,4 @@
-﻿namespace Auto_Torrent_Starter_Service {
+﻿namespace AutoTorrentStarter {
     public static class Program {
         public static void Main(string[] args) {
 #if DEBUG

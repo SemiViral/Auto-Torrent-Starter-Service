@@ -2,7 +2,7 @@
 using System.Diagnostics;
 using System.IO;
 
-namespace Auto_Torrent_Starter_Service {
+namespace AutoTorrentStarter {
     public class AutoTorrentStarter {
         public AutoTorrentStarter(string saveDirectory, string watchDirectory, string torrenterPath) {
             _saveDirectory = saveDirectory;

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
 
-namespace Auto_Torrent_Starter_Service {
+namespace AutoTorrentStarter {
     public class AutoFileSystemWatcher : IDisposable {
         public AutoFileSystemWatcher(string directoryToWatch) {
             _directoryToWatch = directoryToWatch;
