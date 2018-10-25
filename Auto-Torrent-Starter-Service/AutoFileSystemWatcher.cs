@@ -1,7 +1,8 @@
 ﻿using System.IO;
+using System;
 
-namespace AutoTorrentStarterService.Model {
-    public class AutoFileSystemWatcher {
+namespace Auto_Torrent_Starter_Service {
+    public class AutoFileSystemWatcher : IDisposable {
         public AutoFileSystemWatcher(string directoryToWatch) {
             _directoryToWatch = directoryToWatch;
             _fileSystemWatcher = new FileSystemWatcher(_directoryToWatch);
@@ -22,6 +23,10 @@ namespace AutoTorrentStarterService.Model {
 
         private void OnFileSystemWatcher_Created(object sender, FileSystemEventArgs args) {
             FileSystemWatcher_Created?.Invoke(sender, args);
+        }
+
+        public void Dispose() {
+            _fileSystemWatcher.Dispose();
         }
 
         #endregion

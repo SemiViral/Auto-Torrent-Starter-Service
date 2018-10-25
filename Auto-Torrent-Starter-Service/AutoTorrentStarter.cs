@@ -1,16 +1,15 @@
 ﻿using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using AutoTorrentStarterService.Model;
 
-namespace AutoTorrentStarterService.ViewModel {
-    public class AutoTorrentStarterServiceViewModel {
-        public AutoTorrentStarterServiceViewModel() {
-            _saveDirectory = @"F:\Videos\";
-            _directoryToWatch = @"C:\Users\semiv\OneDrive\Documents\Torrents";
-            _torrentDownaloderPath = @"C:\Users\semiv\AppData\Roaming\uTorrent\uTorrent.exe";
-            
-            AutoFileSystemWatcher = new AutoFileSystemWatcher(_directoryToWatch);
+namespace Auto_Torrent_Starter_Service {
+    public class AutoTorrentStarter {
+        public AutoTorrentStarter(string saveDirectory, string watchDirectory, string torrentPath) {
+            _saveDirectory = @"C:\Users\semiv\OneDrive\Documents\Torrents\Temp";
+            _watchDirectory = @"C:\Users\semiv\OneDrive\Documents\Torrents\Temp";
+            _torrentPath = @"C:\Users\semiv\AppData\Roaming\uTorrent\uTorrent.exe";
+
+            AutoFileSystemWatcher = new AutoFileSystemWatcher(_watchDirectory);
             AutoFileSystemWatcher.FileSystemWatcher_Created += OnAutoFileSystemWatcher_Created;
 
             Initialise();
@@ -19,10 +18,12 @@ namespace AutoTorrentStarterService.ViewModel {
         #region INIT
 
         private void Initialise() {
-            foreach (string filePath in LoadTorrents(_directoryToWatch)) {
+            foreach (string filePath in LoadTorrents(_watchDirectory)) {
                 FileInfo file = new FileInfo(filePath);
 
-                if (file.Directory == null) continue;
+                if (file.Directory == null) {
+                    continue;
+                }
 
                 OnAutoFileSystemWatcher_Created(this, new FileSystemEventArgs(WatcherChangeTypes.Created, file.Directory.FullName, file.Name));
             }
@@ -41,11 +42,11 @@ namespace AutoTorrentStarterService.ViewModel {
         #region EVENTS
 
         public void EventLog_EntryWritten(object sender, EntryWrittenEventArgs args) { }
-        
+
         private void OnAutoFileSystemWatcher_Created(object sender, FileSystemEventArgs args) {
             string fullCommand = $"/DIRECTORY \"{_saveDirectory}\" \"{args.FullPath}\"";
 
-                Process.Start(_torrentDownaloderPath, fullCommand);
+            Process.Start(_torrentPath, fullCommand);
         }
 
         #endregion
@@ -53,8 +54,8 @@ namespace AutoTorrentStarterService.ViewModel {
         #region MEMBERS
 
         private readonly string _saveDirectory;
-        private readonly string _directoryToWatch;
-        private readonly string _torrentDownaloderPath;
+        private readonly string _watchDirectory;
+        private readonly string _torrentPath;
 
         private AutoFileSystemWatcher AutoFileSystemWatcher { get; }
 
