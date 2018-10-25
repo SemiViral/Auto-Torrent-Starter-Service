@@ -4,10 +4,10 @@ using System.IO;
 
 namespace Auto_Torrent_Starter_Service {
     public class AutoTorrentStarter {
-        public AutoTorrentStarter(string saveDirectory, string watchDirectory, string torrentPath) {
-            _saveDirectory = @"C:\Users\semiv\OneDrive\Documents\Torrents\Temp";
-            _watchDirectory = @"C:\Users\semiv\OneDrive\Documents\Torrents\Temp";
-            _torrentPath = @"C:\Users\semiv\AppData\Roaming\uTorrent\uTorrent.exe";
+        public AutoTorrentStarter(string saveDirectory, string watchDirectory, string torrenterPath) {
+            _saveDirectory = saveDirectory;
+            _watchDirectory = watchDirectory;
+            _torrenterPath = torrenterPath;
 
             AutoFileSystemWatcher = new AutoFileSystemWatcher(_watchDirectory);
             AutoFileSystemWatcher.FileSystemWatcher_Created += OnAutoFileSystemWatcher_Created;
@@ -40,13 +40,11 @@ namespace Auto_Torrent_Starter_Service {
         #endregion
 
         #region EVENTS
-
-        public void EventLog_EntryWritten(object sender, EntryWrittenEventArgs args) { }
-
+        
         private void OnAutoFileSystemWatcher_Created(object sender, FileSystemEventArgs args) {
             string fullCommand = $"/DIRECTORY \"{_saveDirectory}\" \"{args.FullPath}\"";
 
-            Process.Start(_torrentPath, fullCommand);
+            Process.Start(_torrenterPath, fullCommand);
         }
 
         #endregion
@@ -55,9 +53,9 @@ namespace Auto_Torrent_Starter_Service {
 
         private readonly string _saveDirectory;
         private readonly string _watchDirectory;
-        private readonly string _torrentPath;
+        private readonly string _torrenterPath;
 
-        private AutoFileSystemWatcher AutoFileSystemWatcher { get; }
+        public AutoFileSystemWatcher AutoFileSystemWatcher { get; }
 
         #endregion
     }

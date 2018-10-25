@@ -1,14 +1,26 @@
-﻿using System.IO;
-using System;
+﻿using System;
+using System.IO;
 
 namespace Auto_Torrent_Starter_Service {
     public class AutoFileSystemWatcher : IDisposable {
         public AutoFileSystemWatcher(string directoryToWatch) {
             _directoryToWatch = directoryToWatch;
             _fileSystemWatcher = new FileSystemWatcher(_directoryToWatch);
-            _fileSystemWatcher.Created += OnFileSystemWatcher_Created;
-            _fileSystemWatcher.EnableRaisingEvents = true;
         }
+
+        #region METHODS
+
+        public void WaitForChanged(WatcherChangeTypes changeType) {
+            WaitForChangedResult changedResult =_fileSystemWatcher.WaitForChanged(changeType);
+
+            switch(changedResult.ChangeType) {
+                case WatcherChangeTypes.Created:
+                    OnFileSystemWatcher_Created(_fileSystemWatcher, new FileSystemEventArgs(WatcherChangeTypes.Created, Path.GetFullPath(changedResult.Name), changedResult.Name));
+                    break;
+            }
+        }
+
+        #endregion
 
         #region MEMBERS
 
