@@ -10,9 +10,9 @@
 
             _autoTorrentStarter = new AutoTorrentStarter(args[0], args[1], args[2]);
 
-            _continue = true;
+            Running = true;
 
-            while (_continue) {
+            while (Running) {
                 _autoTorrentStarter.AutoFileSystemWatcher.WaitForChanged(System.IO.WatcherChangeTypes.Created);
             }
 
@@ -22,7 +22,8 @@
         #region MEMBERS
 
         private static AutoTorrentStarter _autoTorrentStarter;
-        private static bool _continue;
+
+        public static bool Running { get; private set; }
 
         #endregion
     }

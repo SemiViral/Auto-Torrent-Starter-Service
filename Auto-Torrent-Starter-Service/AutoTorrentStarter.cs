@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 
@@ -44,13 +45,23 @@ namespace AutoTorrentStarter {
         private void OnAutoFileSystemWatcher_Created(object sender, FileSystemEventArgs args) {
             string fullCommand = $"/DIRECTORY \"{_saveDirectory}\" \"{args.FullPath}\"";
 
-            Process.Start(_torrenterPath, fullCommand);
+            try {
+                Process.Start(_torrenterPath, fullCommand);
+            } catch (Exception e) {
+                using (FileStream stream = File.OpenWrite("~/log")) {
+                    stream.App
+                }
+            } finally {
+
+            }
+
         }
 
         #endregion
 
         #region MEMBERS
 
+        private string[] _torrentsStarted;
         private readonly string _saveDirectory;
         private readonly string _watchDirectory;
         private readonly string _torrenterPath;

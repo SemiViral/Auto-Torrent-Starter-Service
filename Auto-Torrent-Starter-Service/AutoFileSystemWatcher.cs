@@ -1,5 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Threading;
+using System.Timers;
 
 namespace AutoTorrentStarter {
     public class AutoFileSystemWatcher : IDisposable {
@@ -8,21 +11,60 @@ namespace AutoTorrentStarter {
             _fileSystemWatcher = new FileSystemWatcher(_directoryToWatch);
         }
 
-        #region METHODS
+        #region THREADING TASKS
 
-        public void WaitForChanged(WatcherChangeTypes changeType) {
-            WaitForChangedResult changedResult =_fileSystemWatcher.WaitForChanged(changeType);
+        private void FileSystemWatcher_WaitForChanged(WatcherChangeTypes changeType) {
+            while (Program.Running) {
+                WaitForChangedResult changeResult = _fileSystemWatcher.WaitForChanged(changeType);
+                OnFileChanged(new FileSystemEventArgs(changeType, Path.GetFullPath(changeResult.Name), changeResult.Name));
+            }
+        }
 
-            switch(changedResult.ChangeType) {
-                case WatcherChangeTypes.Created:
-                    OnFileSystemWatcher_Created(_fileSystemWatcher, new FileSystemEventArgs(WatcherChangeTypes.Created, Path.GetFullPath(changedResult.Name), changedResult.Name));
-                    break;
+        /// <summary>
+        /// Polls the watched directory for changes.
+        /// </summary>
+        /// <param name="pollFrequency">frequency to poll in milliseconds</param>
+        private void PollingTimer_WaitForChanged(int pollFrequency) {
+            while (Program.Running) {
+                Thread.Sleep(pollFrequency);
+
+
+            }
+        }
+
+        private void PollingTimer_OnFileChangedWrapper() {
+            Stack<FileSystemEventArgs> fileSystemPoll = PollWatchDirectory();
+
+            while (fileSystemPoll.Count > 0) {
+                //TODO logic
             }
         }
 
         #endregion
 
+        #region METHODS
+
+        public void OnFileChanged(FileSystemEventArgs args) {
+            lock (_fileChangedLock) {
+                switch (args.ChangeType) {
+                    case WatcherChangeTypes.Created:
+                        OnFileSystemWatcher_Created(_fileSystemWatcher, new FileSystemEventArgs(WatcherChangeTypes.Created, Path.GetFullPath(changedResult.Name), changedResult.Name));
+                        break;
+                }
+            }
+        }
+
+        private Stack<FileSystemEventArgs> PollWatchDirectory() {
+            //TODO logic
+
+            return new Stack<FileSystemEventArgs>();
+        }
+
+        #endregion
+
         #region MEMBERS
+
+        private static object _fileChangedLock;
 
         private readonly string _directoryToWatch;
         private readonly FileSystemWatcher _fileSystemWatcher;
