@@ -9,7 +9,7 @@ namespace AutoTorrentStarterService.View {
         public AutoTorrentStarterService() {
             InitializeComponent();
 
-            _atssViewModel = new AutoTorrentStarterServiceViewModel();
+            _atssViewModel = new AutoTorrentStarterServiceViewModel(EventLog);
         }
 
         protected override void OnStart(string[] args) { }

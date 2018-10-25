@@ -28,13 +28,22 @@
         /// </summary>
         private void InitializeComponent()
         {
+            this.EventLog = new System.Diagnostics.EventLog();
+            ((System.ComponentModel.ISupportInitialize)(this.EventLog)).BeginInit();
+            // 
+            // EventLog
+            // 
+            this.EventLog.EntryWritten += new System.Diagnostics.EntryWrittenEventHandler(this.EventLog_EntryWritten);
             // 
             // AutoTorrentStarterService
             // 
-            this.ServiceName = "AutoTorrentStarterService";
+            this.ServiceName = "Service1";
+            ((System.ComponentModel.ISupportInitialize)(this.EventLog)).EndInit();
 
         }
 
         #endregion
+
+        private System.Diagnostics.EventLog EventLog;
     }
 }

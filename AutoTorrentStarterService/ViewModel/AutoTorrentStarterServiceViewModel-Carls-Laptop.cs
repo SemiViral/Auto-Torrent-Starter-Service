@@ -5,11 +5,14 @@ using AutoTorrentStarterService.Model;
 
 namespace AutoTorrentStarterService.ViewModel {
     public class AutoTorrentStarterServiceViewModel {
-        public AutoTorrentStarterServiceViewModel() {
-            _saveDirectory = @"F:\Videos\";
-            _directoryToWatch = @"C:\Users\semiv\OneDrive\Documents\Torrents";
+        public AutoTorrentStarterServiceViewModel(EventLog eventLog) {
+            _saveDirectory = @"C:\Users\semiv\Documents\";
+            _directoryToWatch = @"C:\Users\semiv\OneDrive\Documents\Torrents\Temp";
             _torrentDownaloderPath = @"C:\Users\semiv\AppData\Roaming\uTorrent\uTorrent.exe";
-            
+
+            EventLog = eventLog;
+            EventLog.EntryWritten += EventLog_EntryWritten;
+
             AutoFileSystemWatcher = new AutoFileSystemWatcher(_directoryToWatch);
             AutoFileSystemWatcher.FileSystemWatcher_Created += OnAutoFileSystemWatcher_Created;
 
@@ -41,11 +44,11 @@ namespace AutoTorrentStarterService.ViewModel {
         #region EVENTS
 
         public void EventLog_EntryWritten(object sender, EntryWrittenEventArgs args) { }
-        
+
         private void OnAutoFileSystemWatcher_Created(object sender, FileSystemEventArgs args) {
             string fullCommand = $"/DIRECTORY \"{_saveDirectory}\" \"{args.FullPath}\"";
 
-                Process.Start(_torrentDownaloderPath, fullCommand);
+            Process.Start(_torrentDownaloderPath, fullCommand);
         }
 
         #endregion
@@ -57,6 +60,7 @@ namespace AutoTorrentStarterService.ViewModel {
         private readonly string _torrentDownaloderPath;
 
         private AutoFileSystemWatcher AutoFileSystemWatcher { get; }
+        private EventLog EventLog { get; }
 
         #endregion
     }
