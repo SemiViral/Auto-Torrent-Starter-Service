@@ -5,7 +5,7 @@
             args = new string[3];
             args[0] = @"C:\Users\semiv\OneDrive\Documents\Torrents\Temp";
             args[1] = @"C:\Users\semiv\OneDrive\Documents\Torrents\Temp";
-            args[2] = @"C:\Users\semiv\AppData\Roaming\uTorrent\uTorrent.exe";
+            args[2] = @"C:\Program Files\Transmission\transmission-qt.exe";
 #endif
 
             _autoTorrentStarter = new AutoTorrentStarter(args[0], args[1], args[2]);

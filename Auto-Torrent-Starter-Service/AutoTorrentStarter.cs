@@ -44,13 +44,14 @@ namespace AutoTorrentStarter {
         #region EVENTS
 
         private void OnAutoFileSystemWatcher_Created(object sender, FileSystemEventArgs args) {
-            string fullCommand = $"/DIRECTORY \"{_saveDirectory}\" \"{args.FullPath}\"";
+            string fullCommand = $"-m \"{args.FullPath}\"";
 
             try {
                 Process.Start(_torrenterPath, fullCommand);
             } catch (Exception e) {
                 using (FileStream logStream = File.OpenWrite("~/log")) {
                     logStream.Write(Encoding.ASCII.GetBytes($"{e.Source} => {e.Message}"));
+                    logStream.Flush();
                 }
             }
         }
@@ -58,7 +59,7 @@ namespace AutoTorrentStarter {
         #endregion
 
         #region MEMBERS
-        
+
         private readonly string _saveDirectory;
         private readonly string _watchDirectory;
         private readonly string _torrenterPath;
