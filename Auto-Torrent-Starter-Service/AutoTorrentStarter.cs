@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
+using System.Text;
 
 namespace AutoTorrentStarter {
     public class AutoTorrentStarter {
@@ -10,7 +11,7 @@ namespace AutoTorrentStarter {
             _watchDirectory = watchDirectory;
             _torrenterPath = torrenterPath;
 
-            AutoFileSystemWatcher = new AutoFileSystemWatcher(_watchDirectory);
+            AutoFileSystemWatcher = new AutoFileSystemWatcher(_watchDirectory, 16000);
             AutoFileSystemWatcher.FileSystemWatcher_Created += OnAutoFileSystemWatcher_Created;
 
             Initialise();
@@ -41,27 +42,23 @@ namespace AutoTorrentStarter {
         #endregion
 
         #region EVENTS
-        
+
         private void OnAutoFileSystemWatcher_Created(object sender, FileSystemEventArgs args) {
             string fullCommand = $"/DIRECTORY \"{_saveDirectory}\" \"{args.FullPath}\"";
 
             try {
                 Process.Start(_torrenterPath, fullCommand);
             } catch (Exception e) {
-                using (FileStream stream = File.OpenWrite("~/log")) {
-                    stream.App
+                using (FileStream logStream = File.OpenWrite("~/log")) {
+                    logStream.Write(Encoding.ASCII.GetBytes($"{e.Source} => {e.Message}"));
                 }
-            } finally {
-
             }
-
         }
 
         #endregion
 
         #region MEMBERS
-
-        private string[] _torrentsStarted;
+        
         private readonly string _saveDirectory;
         private readonly string _watchDirectory;
         private readonly string _torrenterPath;

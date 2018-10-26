@@ -1,42 +1,29 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Threading;
-using System.Timers;
 
 namespace AutoTorrentStarter {
     public class AutoFileSystemWatcher : IDisposable {
-        public AutoFileSystemWatcher(string directoryToWatch) {
+        public AutoFileSystemWatcher(string directoryToWatch, int bufferSize) {
+            _fileChangedLock = new object();
             _directoryToWatch = directoryToWatch;
-            _fileSystemWatcher = new FileSystemWatcher(_directoryToWatch);
+            _fileSystemWatcher = new FileSystemWatcher(_directoryToWatch) {
+                NotifyFilter = NotifyFilters.LastAccess | NotifyFilters.LastWrite | NotifyFilters.FileName,
+                IncludeSubdirectories = true
+            };
+
+            if (bufferSize > 64000) {
+                throw new ArgumentOutOfRangeException(nameof(bufferSize), bufferSize, $"Parameter '{nameof(bufferSize)}' cannot be greater than 64000 bytes.");
+            }
+
+            _fileSystemWatcher.InternalBufferSize = bufferSize;
         }
 
         #region THREADING TASKS
 
-        private void FileSystemWatcher_WaitForChanged(WatcherChangeTypes changeType) {
+        public void WaitForChanged(WatcherChangeTypes changeType) {
             while (Program.Running) {
                 WaitForChangedResult changeResult = _fileSystemWatcher.WaitForChanged(changeType);
                 OnFileChanged(new FileSystemEventArgs(changeType, Path.GetFullPath(changeResult.Name), changeResult.Name));
-            }
-        }
-
-        /// <summary>
-        /// Polls the watched directory for changes.
-        /// </summary>
-        /// <param name="pollFrequency">frequency to poll in milliseconds</param>
-        private void PollingTimer_WaitForChanged(int pollFrequency) {
-            while (Program.Running) {
-                Thread.Sleep(pollFrequency);
-
-
-            }
-        }
-
-        private void PollingTimer_OnFileChangedWrapper() {
-            Stack<FileSystemEventArgs> fileSystemPoll = PollWatchDirectory();
-
-            while (fileSystemPoll.Count > 0) {
-                //TODO logic
             }
         }
 
@@ -48,16 +35,10 @@ namespace AutoTorrentStarter {
             lock (_fileChangedLock) {
                 switch (args.ChangeType) {
                     case WatcherChangeTypes.Created:
-                        OnFileSystemWatcher_Created(_fileSystemWatcher, new FileSystemEventArgs(WatcherChangeTypes.Created, Path.GetFullPath(changedResult.Name), changedResult.Name));
+                        OnFileSystemWatcher_Created(_fileSystemWatcher, args);
                         break;
                 }
             }
-        }
-
-        private Stack<FileSystemEventArgs> PollWatchDirectory() {
-            //TODO logic
-
-            return new Stack<FileSystemEventArgs>();
         }
 
         #endregion
